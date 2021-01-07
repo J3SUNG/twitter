@@ -1,9 +1,29 @@
-import React, { useState } from "react";
+import { dbService } from "fbase";
+import React, { useState, useEffect } from "react";
 
 const Home = () => {
   const [tweet, setTweet] = useState("");
-  const onSubmit = (event) => {
+  const [tweets, setTweets] = useState([]);
+  const getTweets = async () => {
+    const dbTweets = await dbService.collection("tweets").get();
+    dbTweets.forEach((document) => {
+      const tweetObject = {
+        ...document.data(),
+        id: document.id,
+      };
+      setTweets((prev) => [tweetObject, ...prev]);
+    });
+  };
+  useEffect(() => {
+    getTweets();
+  }, []);
+  const onSubmit = async (event) => {
     event.preventDefault();
+    await dbService.collection("tweets").add({
+      tweet,
+      createdAt: Date.now(),
+    });
+    setTweet("");
   };
   const onChange = (event) => {
     const {
@@ -11,18 +31,26 @@ const Home = () => {
     } = event;
     setTweet(value);
   };
+  console.log(tweets);
   return (
     <div>
       <form onSubmit={onSubmit}>
         <input
-          onChange={onChange}
           value={tweet}
+          onChange={onChange}
           type="text"
           placeholder="What's on your mind?"
-          maxLength={20}
+          maxLength={120}
         />
-        <input type="submit" value="Nweet" />
+        <input type="submit" value="Tweet" />
       </form>
+      <div>
+        {tweets.map((tweet) => (
+          <div key={tweet.id}>
+            <h4>{tweet.tweet}</h4>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

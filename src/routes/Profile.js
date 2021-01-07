@@ -1,8 +1,8 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { authService } from "../fbase";
 
-export default () => {
+const Profile = () => {
   // const history = useHistory();
   const onLogOutClick = () => {
     authService.signOut();
@@ -14,3 +14,5 @@ export default () => {
     </>
   );
 };
+
+export default Profile;
