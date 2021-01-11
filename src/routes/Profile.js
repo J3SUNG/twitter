@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { authService, dbService } from "../fbase";
 
-const Profile = ({ userObj }) => {
+const Profile = ({ refreshUser, userObj }) => {
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
   const onLogOutClick = () => {
     authService.signOut();
@@ -23,6 +23,7 @@ const Profile = ({ userObj }) => {
       await userObj.updateProfile({
         displayName: newDisplayName,
       });
+      refreshUser();
     }
   };
   const onChange = (event) => {
